@@ -1,3 +1,3 @@
 \c nc_news
 
-SELECT * FROM topics
+SELECT * FROM articles WHERE article_id=2
