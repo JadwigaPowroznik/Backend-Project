@@ -98,4 +98,104 @@ describe("my Express app", () => {
         });
     });
   });
+  describe("/api/articles/:article_id", () => {
+    it("200: responds with the updated article object where votes are incremented by 10", () => {
+      const article_id = 2;
+      const articleUpdate = {
+        inc_votes: 10,
+      };
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send(articleUpdate)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toEqual(
+            expect.objectContaining({
+              author: "icellusedkars",
+              title: "Sony Vaio; or, The Laptop",
+              article_id: article_id,
+              body: expect.any(String),
+              topic: "mitch",
+              created_at: "2020-10-16T05:03:00.000Z",
+              votes: 10,
+            })
+          );
+        });
+    });
+    it("200: responds with the updated article object where votes are decremented by 10", () => {
+      const article_id = 2;
+      const articleUpdate = {
+        inc_votes: -10,
+      };
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send(articleUpdate)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toEqual(
+            expect.objectContaining({
+              author: "icellusedkars",
+              title: "Sony Vaio; or, The Laptop",
+              article_id: article_id,
+              body: expect.any(String),
+              topic: "mitch",
+              created_at: "2020-10-16T05:03:00.000Z",
+              votes: -10,
+            })
+          );
+        });
+    });
+    it("400: bad request response due to missing required fields", () => {
+      let id = 2;
+      const articleUpdate = {};
+      return request(app)
+        .patch(`/api/articles/${id}`)
+        .send(articleUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.msg;
+          expect(errMsg).toBe(`Missing required fields!`);
+        });
+    });
+    it("400: bad request response due to incorrect data type", () => {
+      let id = 2;
+      const articleUpdate = { inc_votes: "increment" };
+      return request(app)
+        .patch(`/api/articles/${id}`)
+        .send(articleUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.msg;
+          expect(errMsg).toBe(`Incorrect data type!`);
+        });
+    });
+    it("404: bad request response for invalid article ID", () => {
+      let id = 33333;
+      const articleUpdate = {
+        inc_votes: -10,
+      };
+      return request(app)
+        .patch(`/api/articles/${id}`)
+        .send(articleUpdate)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Article ID ${id} does not exist!`);
+        });
+    });
+    it("404: bad request response for ID value out of range", () => {
+      let id = 5555555555555555555;
+      const articleUpdate = {
+        inc_votes: -10,
+      };
+      return request(app)
+        .patch(`/api/articles/${id}`)
+        .send(articleUpdate)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Article ID does not exist!`);
+        });
+    });
+  });
 });
