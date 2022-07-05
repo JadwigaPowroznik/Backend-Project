@@ -198,4 +198,30 @@ describe("my Express app", () => {
         });
     });
   });
+  describe("/api/users", () => {
+    it("200: returns an array of users objects", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          body.users.forEach((user) =>
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+              })
+            )
+          );
+        });
+    });
+    it("404: bad request response for invalid path", () => {
+      return request(app)
+        .get("/api/us")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid path");
+        });
+    });
+  });
 });
