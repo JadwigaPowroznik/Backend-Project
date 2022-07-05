@@ -51,7 +51,7 @@ describe("my Express app", () => {
   });
   describe("/api/articles/:article_id", () => {
     it("200: responds with an article object", () => {
-      const article_id = 2;
+      const article_id = 3;
       return request(app)
         .get(`/api/articles/${article_id}`)
         .expect(200)
@@ -59,12 +59,13 @@ describe("my Express app", () => {
           expect(body.article).toEqual(
             expect.objectContaining({
               author: "icellusedkars",
-              title: "Sony Vaio; or, The Laptop",
+              title: "Eight pug gifs that remind me of mitch",
               article_id: article_id,
               body: expect.any(String),
               topic: "mitch",
-              created_at: "2020-10-16T05:03:00.000Z",
+              created_at: "2020-11-03T09:12:00.000Z",
               votes: 0,
+              comment_count: "2",
             })
           );
         });
@@ -233,6 +234,37 @@ describe("my Express app", () => {
     it("404: bad request response for invalid path", () => {
       return request(app)
         .get("/api/us")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid path");
+        });
+    });
+  });
+  describe("/api/articles", () => {
+    it("200: returns an articles array of article objects", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length > 0).toBe(true);
+          body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                votes: expect.any(Number),
+                author: expect.any(String),
+                comment_count: expect.any(String),
+              })
+            ),
+              expect(article).toHaveProperty("created_at");
+          });
+        });
+    });
+    it("404: bad request response for invalid path", () => {
+      return request(app)
+        .get("/api/art")
         .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Invalid path");

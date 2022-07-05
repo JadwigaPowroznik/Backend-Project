@@ -3,6 +3,7 @@ const {
   selectArticleById,
   updateArticleById,
   fetchUsers,
+  fetchArticle,
 } = require("../models/news.models.js");
 
 exports.getTopics = (req, res, next) => {
@@ -37,5 +38,11 @@ exports.patchArticleById = (req, res, next) => {
 exports.getUsers = (req, res, next) => {
   fetchUsers().then((users) => {
     res.status(200).send({ users });
+  });
+};
+
+exports.getArticles = (req, res, next) => {
+  fetchArticle().then((articles) => {
+    res.status(200).send({ articles });
   });
 };
