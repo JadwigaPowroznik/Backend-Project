@@ -29,6 +29,7 @@ describe("my Express app", () => {
         .get("/api/topics")
         .expect(200)
         .then(({ body }) => {
+          expect(body.topics.length > 0).toBe(true);
           body.topics.forEach((topic) =>
             expect(topic).toEqual(
               expect.objectContaining({
@@ -169,6 +170,19 @@ describe("my Express app", () => {
           expect(errMsg).toBe(`Incorrect data type!`);
         });
     });
+    it("400: bad request response for invalid path", () => {
+      const articleUpdate = {
+        inc_votes: -10,
+      };
+      return request(app)
+        .patch("/api/articles/notAnID")
+        .send(articleUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe("Bad data type passed to endpoint");
+        });
+    });
     it("404: bad request response for invalid article ID", () => {
       let id = 33333;
       const articleUpdate = {
@@ -204,6 +218,7 @@ describe("my Express app", () => {
         .get("/api/users")
         .expect(200)
         .then(({ body }) => {
+          expect(body.users.length > 0).toBe(true);
           body.users.forEach((user) =>
             expect(user).toEqual(
               expect.objectContaining({

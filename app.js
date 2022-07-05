@@ -27,7 +27,7 @@ app.use((err, req, res, next) => {
   }
 });
 app.use((err, req, res, next) => {
-  console.log(err, "<---- in first error handler");
+  //console.log(err, "<---- in first error handler");
   if (err.status && err.errMessage) {
     res.status(err.status).send({ errMessage: err.errMessage });
   } else if (err.code === "22003") {
@@ -38,14 +38,14 @@ app.use((err, req, res, next) => {
 });
 app.use((err, req, res, next) => {
   if (err.code) {
-    console.log(err, "<---- it is a PSQL error");
+    //console.log(err, "<---- it is a PSQL error");
     res.status(400).send({ errMessage: "Bad data type passed to endpoint" });
   } else {
     next(err);
   }
 });
 app.use((err, req, res, next) => {
-  console.log(err, "<<< inside 500 handler");
+  //console.log(err, "<<< inside 500 handler");
   res.status(500).send({ msg: "server error" });
 });
 
