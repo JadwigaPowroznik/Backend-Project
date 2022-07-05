@@ -1,8 +1,6 @@
 You are now connected to database "nc_news" as user "jadwiga".
-   slug   |               description               
-----------+-----------------------------------------
- coding   | Code is love, code is life
- football | FOOTIE!
- cooking  | Hey good looking, what you got cooking?
-(3 rows)
+ article_id |                               title                                | topic  |  author   |                                                                                                                                                                                                                                                                      body                                                                                                                                                                                                                                                                      |     created_at      | votes 
+------------+--------------------------------------------------------------------+--------+-----------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+-------
+          2 | The Rise Of Thinking Machines: How IBM's Watson Takes On The World | coding | jessjelly | Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world. | 2020-05-14 01:02:00 |    10
+(1 row)
 
