@@ -459,4 +459,24 @@ describe("my Express app", () => {
         });
     });
   });
+  describe("/api/comments/:comment_id", () => {
+    it("204: responds with an empty response body", () => {
+      return request(app)
+        .delete("/api/comments/7")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
+    it("404: bad request response due to invalid comment ID", () => {
+      let id = 50;
+      return request(app)
+        .delete(`/api/comments/${id}`)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Comment ID: ${id} does not exist!`);
+        });
+    });
+  });
 });

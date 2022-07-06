@@ -9,6 +9,8 @@ const {
   checkUserExist,
   checkArticleIdExist,
   checkTopicExist,
+  checkCommentIdExist,
+  removeCommentById,
 } = require("../models/news.models.js");
 
 exports.getTopics = (req, res, next) => {
@@ -78,6 +80,17 @@ exports.postCommentByArticleId = async (req, res, next) => {
     await checkUserExist(username);
     const comment = await addCommentByArticleId(article_id, newComment);
     res.status(200).send({ comment });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteCommentById = async (req, res, next) => {
+  try {
+    let { comment_id } = req.params;
+    await checkCommentIdExist(comment_id);
+    await removeCommentById(comment_id);
+    res.status(204).send({});
   } catch (err) {
     next(err);
   }
