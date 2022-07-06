@@ -8,13 +8,14 @@ const {
   getArticleCommentsById,
   postCommentByArticleId,
   deleteCommentById,
+  getEndpoints,
 } = require("./controllers/news.controllers.js");
 
 const app = express();
 
 app.use(express.json());
 
-//app.get("/api", getEndpionts);
+app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
 

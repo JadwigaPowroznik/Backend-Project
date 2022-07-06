@@ -95,3 +95,20 @@ exports.deleteCommentById = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getEndpoints = (req, res) => {
+  const endpointsJson = {
+    endpoints: [
+      { endpoint: "/api" },
+      { endpoint: "/api/topics" },
+      { endpoint: "/api/articles" },
+      { endpoint: "/api/articles/:article_id" },
+      { endpoint: "/api/articles/:article_id/comments" },
+      { endpoint: "/api/articles/:article_id" },
+      { endpoint: "/api/articles/:article_id/comments" },
+      { endpoint: "/api/users" },
+      { endpoint: "/api/comments/:comment_id" },
+    ],
+  };
+  res.status(200).send(endpointsJson);
+};

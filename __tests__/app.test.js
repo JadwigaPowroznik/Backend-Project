@@ -479,4 +479,27 @@ describe("my Express app", () => {
         });
     });
   });
+  describe("/api", () => {
+    it("200: responds with a JSON describing all the available endpoints on this API", () => {
+      const endpointsJson = {
+        endpoints: [
+          { endpoint: "/api" },
+          { endpoint: "/api/topics" },
+          { endpoint: "/api/articles" },
+          { endpoint: "/api/articles/:article_id" },
+          { endpoint: "/api/articles/:article_id/comments" },
+          { endpoint: "/api/articles/:article_id" },
+          { endpoint: "/api/articles/:article_id/comments" },
+          { endpoint: "/api/users" },
+          { endpoint: "/api/comments/:comment_id" },
+        ],
+      };
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual(endpointsJson);
+        });
+    });
+  });
 });
