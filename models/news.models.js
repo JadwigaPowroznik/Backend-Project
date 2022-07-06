@@ -159,18 +159,26 @@ exports.checkTopicExist = (topic) => {
 
 exports.checkCommentIdExist = (comment_id) => {
   if (!comment_id) return;
-  return db
-    .query("SELECT * FROM comments WHERE comment_id =$1", [comment_id])
-    .then(({ rowCount }) => {
-      if (rowCount === 0) {
-        return Promise.reject({
-          status: 404,
-          errMessage: `Comment ID: ${comment_id} does not exist!`,
-        });
-      }
-    });
+  if (!isNaN(comment_id)) {
+    return db
+      .query("SELECT * FROM comments WHERE comment_id =$1", [comment_id])
+      .then(({ rowCount }) => {
+        if (rowCount === 0) {
+          return Promise.reject({
+            status: 404,
+            errMessage: `Comment ID: ${comment_id} does not exist!`,
+          });
+        }
+      });
+  } else {
+    return Promise.reject("Incorrect data type passed to endpoint");
+  }
 };
 
 exports.removeCommentById = (id) => {
-  return db.query("DELETE FROM comments WHERE comment_id=$1", [id]);
+  return db
+    .query("DELETE FROM comments WHERE comment_id=$1", [id])
+    .then((result) => {
+      return result;
+    });
 };

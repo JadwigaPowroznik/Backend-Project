@@ -89,8 +89,8 @@ exports.deleteCommentById = async (req, res, next) => {
   try {
     let { comment_id } = req.params;
     await checkCommentIdExist(comment_id);
-    await removeCommentById(comment_id);
-    res.status(204).send({});
+    const deleted = await removeCommentById(comment_id);
+    res.status(204).send({ deleted });
   } catch (err) {
     next(err);
   }
@@ -99,15 +99,19 @@ exports.deleteCommentById = async (req, res, next) => {
 exports.getEndpoints = (req, res) => {
   const endpointsJson = {
     endpoints: [
-      { endpoint: "/api" },
-      { endpoint: "/api/topics" },
-      { endpoint: "/api/articles" },
-      { endpoint: "/api/articles/:article_id" },
-      { endpoint: "/api/articles/:article_id/comments" },
-      { endpoint: "/api/articles/:article_id" },
-      { endpoint: "/api/articles/:article_id/comments" },
-      { endpoint: "/api/users" },
-      { endpoint: "/api/comments/:comment_id" },
+      {
+        get: [
+          { endpoint: "/api" },
+          { endpoint: "/api/topics" },
+          { endpoint: "/api/articles" },
+          { endpoint: "/api/articles/:article_id" },
+          { endpoint: "/api/articles/:article_id/comments" },
+          { endpoint: "/api/users" },
+        ],
+      },
+      { patch: [{ endpoint: "/api/articles/:article_id" }] },
+      { post: [{ endpoint: "/api/articles/:article_id/comments" }] },
+      { delete: [{ endpoint: "/api/comments/:comment_id" }] },
     ],
   };
   res.status(200).send(endpointsJson);

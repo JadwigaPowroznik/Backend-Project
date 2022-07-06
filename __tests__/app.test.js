@@ -8,6 +8,7 @@ const {
   articleData,
   commentData,
 } = require("../db/data/test-data/");
+const { expect } = require("@jest/globals");
 
 beforeEach(() =>
   seed({
@@ -460,12 +461,18 @@ describe("my Express app", () => {
     });
   });
   describe("/api/comments/:comment_id", () => {
-    it("204: responds with an empty response body", () => {
+    it("204: responds with an empty response body and checks if comment has been deleted", () => {
+      const id = 8;
       return request(app)
-        .delete("/api/comments/7")
+        .delete(`/api/comments/${id}`)
         .expect(204)
         .then(({ body }) => {
           expect(body).toEqual({});
+          db.query(`SELECT * FROM comments WHERE comment_id =${id}`).then(
+            (result) => {
+              expect(result.rows.length).toBe(0);
+            }
+          );
         });
     });
     it("404: bad request response due to invalid comment ID", () => {
@@ -478,20 +485,32 @@ describe("my Express app", () => {
           expect(errMsg).toBe(`Comment ID: ${id} does not exist!`);
         });
     });
+    it("400: bad request response for invalid path", () => {
+      return request(app)
+        .delete("/api/comments/notAnID")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Incorrect data type passed to endpoint");
+        });
+    });
   });
   describe("/api", () => {
     it("200: responds with a JSON describing all the available endpoints on this API", () => {
       const endpointsJson = {
         endpoints: [
-          { endpoint: "/api" },
-          { endpoint: "/api/topics" },
-          { endpoint: "/api/articles" },
-          { endpoint: "/api/articles/:article_id" },
-          { endpoint: "/api/articles/:article_id/comments" },
-          { endpoint: "/api/articles/:article_id" },
-          { endpoint: "/api/articles/:article_id/comments" },
-          { endpoint: "/api/users" },
-          { endpoint: "/api/comments/:comment_id" },
+          {
+            get: [
+              { endpoint: "/api" },
+              { endpoint: "/api/topics" },
+              { endpoint: "/api/articles" },
+              { endpoint: "/api/articles/:article_id" },
+              { endpoint: "/api/articles/:article_id/comments" },
+              { endpoint: "/api/users" },
+            ],
+          },
+          { patch: [{ endpoint: "/api/articles/:article_id" }] },
+          { post: [{ endpoint: "/api/articles/:article_id/comments" }] },
+          { delete: [{ endpoint: "/api/comments/:comment_id" }] },
         ],
       };
       return request(app)
