@@ -271,4 +271,50 @@ describe("my Express app", () => {
         });
     });
   });
+  describe("/api/articles/:article_id/comments", () => {
+    it("200: responds with an array of comments for the given article_id", () => {
+      const article_id = 1;
+      return request(app)
+        .get(`/api/articles/${article_id}/comments`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments[0]).toEqual({
+            comment_id: 18,
+            votes: 16,
+            created_at: "2020-07-21T00:20:00.000Z",
+            body: "This morning, I showered for nine minutes.",
+            author: "butter_bridge",
+          });
+        });
+    });
+    it("400: bad request response for invalid path", () => {
+      return request(app)
+        .get("/api/articles/notAnID/comments")
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe("Bad data type passed to endpoint");
+        });
+    });
+    it("404: bad request response for invalid article ID", () => {
+      let id = 33333;
+      return request(app)
+        .get(`/api/articles/${id}/comments`)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Article ID ${id} does not exist!`);
+        });
+    });
+    it("404: bad request response for ID value out of range", () => {
+      let id = 5555555555555555555;
+      return request(app)
+        .get(`/api/articles/${id}/comments`)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Article ID does not exist!`);
+        });
+    });
+  });
 });

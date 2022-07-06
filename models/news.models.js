@@ -62,3 +62,20 @@ exports.fetchArticle = () => {
       return result.rows;
     });
 };
+
+exports.selectArticleCommentsById = (id) => {
+  return db
+    .query(
+      `SELECT comments.comment_id, comments.votes, comments.created_at, comments.body, users.username AS author FROM comments LEFT JOIN users ON users.username=comments.author LEFT JOIN articles ON articles.article_id=comments.article_id WHERE articles.article_id = $1`,
+      [id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          errMessage: `Article ID ${id} does not exist!`,
+        });
+      }
+      return rows;
+    });
+};
