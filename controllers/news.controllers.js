@@ -5,6 +5,10 @@ const {
   fetchUsers,
   fetchArticle,
   selectArticleCommentsById,
+  addCommentByArticleId,
+  checkUserExist,
+  checkArticleIdExist,
+  checkTopicExist,
 } = require("../models/news.models.js");
 
 exports.getTopics = (req, res, next) => {
@@ -42,10 +46,15 @@ exports.getUsers = (req, res, next) => {
   });
 };
 
-exports.getArticles = (req, res, next) => {
-  fetchArticle().then((articles) => {
+exports.getArticles = async (req, res, next) => {
+  try {
+    const { sort_by, order, topic } = req.query;
+    await checkTopicExist(topic);
+    const articles = await fetchArticle(sort_by, order, topic);
     res.status(200).send({ articles });
-  });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.getArticleCommentsById = (req, res, next) => {
@@ -58,4 +67,18 @@ exports.getArticleCommentsById = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.postCommentByArticleId = async (req, res, next) => {
+  try {
+    const { article_id } = req.params;
+    const newComment = req.body;
+    const username = req.body.username;
+    await checkArticleIdExist(article_id);
+    await checkUserExist(username);
+    const comment = await addCommentByArticleId(article_id, newComment);
+    res.status(200).send({ comment });
+  } catch (err) {
+    next(err);
+  }
 };

@@ -53,10 +53,32 @@ exports.fetchUsers = () => {
   });
 };
 
-exports.fetchArticle = () => {
+exports.fetchArticle = (sort_by = "created_at", order = "desc", topic) => {
+  const sortOptions = [
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+    "author",
+    "comment_count",
+  ];
+  const orderOptions = ["asc", "desc"];
+  let topicStr = "";
+  if (!sortOptions.includes(sort_by)) {
+    return Promise.reject("Invalid sort query");
+  }
+  if (!orderOptions.includes(order)) {
+    return Promise.reject("Invalid order query");
+  } else {
+    order.toUpperCase();
+  }
+  if (topic !== undefined) {
+    topicStr = ` WHERE articles.topic = '${topic}'`;
+  }
   return db
     .query(
-      `SELECT articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, users.username AS author, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id=articles.article_id LEFT JOIN users ON users.username=articles.author GROUP BY articles.article_id, comments.article_id, users.username ORDER BY articles.created_at DESC`
+      `SELECT articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, users.username AS author, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id=articles.article_id LEFT JOIN users ON users.username=articles.author${topicStr} GROUP BY articles.article_id, comments.article_id, users.username ORDER BY ${sort_by} ${order}`
     )
     .then((result) => {
       return result.rows;
@@ -77,5 +99,62 @@ exports.selectArticleCommentsById = (id) => {
         });
       }
       return rows;
+    });
+};
+
+exports.addCommentByArticleId = (article_id, newComment) => {
+  if (!("body" in newComment)) {
+    return Promise.reject("Missing required fields!");
+  }
+  const { username, body } = newComment;
+  return db
+    .query(
+      `INSERT INTO comments (author, body, article_id ) VALUES ($1, $2, $3) RETURNING comments.author AS username, comments.body`,
+      [username, body, article_id]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
+exports.checkUserExist = (username) => {
+  if (!username) return;
+  return db
+    .query("SELECT * FROM users WHERE username =$1", [username])
+    .then(({ rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({
+          status: 404,
+          errMessage: "Username not Found!",
+        });
+      }
+    });
+};
+
+exports.checkArticleIdExist = (article_id) => {
+  if (!article_id) return;
+  return db
+    .query("SELECT * FROM articles WHERE article_id =$1", [article_id])
+    .then(({ rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({
+          status: 404,
+          errMessage: `Article ID ${article_id} does not exist!`,
+        });
+      }
+    });
+};
+
+exports.checkTopicExist = (topic) => {
+  if (!topic) return;
+  return db
+    .query("SELECT * FROM articles WHERE topic =$1", [topic])
+    .then(({ rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({
+          status: 404,
+          errMessage: `Topic: ${topic} does not exist!`,
+        });
+      }
     });
 };
