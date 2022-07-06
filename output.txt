@@ -1,13 +1,16 @@
-You are now connected to database "nc_news" as user "jadwiga".
- comment_id | votes |     created_at      |                                                                                                                 body                                                                                                                 |    author    
-------------+-------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------
-         60 |    19 | 2020-10-07 04:19:00 | Aut optio perferendis praesentium fugiat. Vel similique non eveniet. Repellat molestiae ipsum voluptates.                                                                                                                            | tickle122
-         40 |     5 | 2020-02-19 05:15:00 | Et optio voluptatem sed reprehenderit quibusdam. Reprehenderit doloremque laboriosam. Vel est amet quia dolor rerum consequatur. Distinctio tenetur dolores. Voluptates laboriosam repudiandae et quisquam ex. Dolorem quidem et.    | tickle122
-        281 |    12 | 2020-03-12 07:05:00 | Facilis magni odit doloribus et illo ea dignissimos voluptate. Sit officia repudiandae eius suscipit velit fuga qui esse. Necessitatibus minus omnis minus ab.                                                                       | happyamy2016
-        153 |     4 | 2020-03-19 16:24:00 | Et deserunt unde quia atque aperiam provident. Ullam provident est ut perferendis aliquam ut blanditiis tenetur. Tenetur laudantium ea et mollitia sit dolores expedita ullam. Ut ad velit magni.                                    | cooljmessy
-        141 |     3 | 2020-11-06 15:04:00 | Quia magni est eum. Excepturi dolore nobis adipisci temporibus laudantium officiis minus. Blanditiis eligendi dolorem.                                                                                                               | cooljmessy
-        132 |    19 | 2020-06-11 10:05:00 | Nihil neque maiores voluptatem sit. Culpa incidunt ut quo id qui provident reprehenderit necessitatibus.                                                                                                                             | cooljmessy
-        213 |    14 | 2020-11-21 01:09:00 | Voluptas accusantium eius earum aliquid. Earum et rerum. Expedita dolores ut autem fuga id accusamus et.                                                                                                                             | weegembump
-         81 |    12 | 2020-07-26 00:10:00 | Incidunt perferendis et eum. Odit aut eaque. Repudiandae et quia impedit quisquam dolore fugit. Magnam non magni qui molestias dolore sed facere blanditiis. Qui doloribus autem dolorum dolor aliquam. Tempora cum officia tempore. | weegembump
-(8 rows)
+You are now connected to database "nc_news_test" as user "jadwiga".
+                         title                          | article_id | topic |     created_at      | votes |    author     | comment_count 
+--------------------------------------------------------+------------+-------+---------------------+-------+---------------+---------------
+ Moustache                                              |         12 | mitch | 2020-10-11 12:24:00 |     0 | butter_bridge |             0
+ Am I a cat?                                            |         11 | mitch | 2020-01-15 22:21:00 |     0 | icellusedkars |             0
+ Seven inspirational thought leaders from Manchester UK |         10 | mitch | 2020-05-14 05:15:00 |     0 | rogersop      |             0
+ They're not exactly dogs, are they?                    |          9 | mitch | 2020-06-06 10:10:00 |     0 | butter_bridge |             2
+ Does Mitch predate civilisation?                       |          8 | mitch | 2020-04-17 02:08:00 |     0 | icellusedkars |             0
+ Z                                                      |          7 | mitch | 2020-01-07 14:08:00 |     0 | icellusedkars |             0
+ A                                                      |          6 | mitch | 2020-10-18 02:00:00 |     0 | icellusedkars |             1
+ Student SUES Mitch!                                    |          4 | mitch | 2020-05-06 02:14:00 |     0 | rogersop      |             0
+ Eight pug gifs that remind me of mitch                 |          3 | mitch | 2020-11-03 09:12:00 |     0 | icellusedkars |             2
+ Sony Vaio; or, The Laptop                              |          2 | mitch | 2020-10-16 06:03:00 |     0 | icellusedkars |             0
+ Living in the shadow of a great man                    |          1 | mitch | 2020-07-09 21:11:00 |   100 | butter_bridge |            11
+(11 rows)
 

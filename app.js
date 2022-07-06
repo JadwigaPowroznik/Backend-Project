@@ -6,6 +6,7 @@ const {
   getUsers,
   getArticles,
   getArticleCommentsById,
+  postCommentByArticleId,
 } = require("./controllers/news.controllers.js");
 
 const app = express();
@@ -19,6 +20,8 @@ app.get("/api/articles/:article_id/comments", getArticleCommentsById);
 app.get("/api/users", getUsers);
 
 app.patch("/api/articles/:article_id", patchArticleById);
+
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Invalid path" });
