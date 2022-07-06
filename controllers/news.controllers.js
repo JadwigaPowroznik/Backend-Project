@@ -98,21 +98,42 @@ exports.deleteCommentById = async (req, res, next) => {
 
 exports.getEndpoints = (req, res) => {
   const endpointsJson = {
-    endpoints: [
-      {
-        get: [
-          { endpoint: "/api" },
-          { endpoint: "/api/topics" },
-          { endpoint: "/api/articles" },
-          { endpoint: "/api/articles/:article_id" },
-          { endpoint: "/api/articles/:article_id/comments" },
-          { endpoint: "/api/users" },
-        ],
-      },
-      { patch: [{ endpoint: "/api/articles/:article_id" }] },
-      { post: [{ endpoint: "/api/articles/:article_id/comments" }] },
-      { delete: [{ endpoint: "/api/comments/:comment_id" }] },
-    ],
+    "GET /api": {
+      description:
+        "returns a json representation of all the available endpoints of the api",
+    },
+    "GET /api/topics": {
+      description: "returns an array of all topics",
+      queries: [],
+    },
+    "GET /api/articles": {
+      description: "returns an array of all articles",
+      queries: ["sort_by", "order", "topic"],
+    },
+    "GET /api/articles/:article_id": {
+      description: "returns an article of given id",
+      queries: [],
+    },
+    "GET /api/articles/:article_id/comments": {
+      description: "returns an array of all comments for a given article id",
+      queries: [],
+    },
+    "GET /api/users": {
+      description: "returns an array of all users",
+      queries: [],
+    },
+    "PATCH /api/articles/:article_id": {
+      description: "updates votes for an article of given id",
+      queries: [],
+    },
+    "POST /api/articles/:article_id/comments": {
+      description: "posts a new comment for an article of given id",
+      queries: [],
+    },
+    "DELETE /api/comments/:comment_id": {
+      description: "deletes a comment of a given id",
+      queries: [],
+    },
   };
   res.status(200).send(endpointsJson);
 };
