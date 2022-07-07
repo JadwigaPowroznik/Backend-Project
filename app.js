@@ -1,4 +1,5 @@
 const express = require("express");
+const apiRouter = require("./routes/apiRouter");
 const {
   getTopics,
   getArticleById,
@@ -9,6 +10,7 @@ const {
   postCommentByArticleId,
   deleteCommentById,
   getEndpoints,
+  getStarted,
 } = require("./controllers/news.controllers.js");
 
 const app = express();
@@ -16,6 +18,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/api", getEndpoints);
+app.use("/api", apiRouter);
 
 app.get("/api/topics", getTopics);
 
@@ -28,6 +31,8 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 app.get("/api/users", getUsers);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
+
+app.get(app.path(), getStarted);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Invalid path" });

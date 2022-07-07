@@ -137,3 +137,9 @@ exports.getEndpoints = (req, res) => {
   };
   res.status(200).send(endpointsJson);
 };
+
+exports.getStarted = (req, res) => {
+  const welcome =
+    "Welcome!\nUse https://news-nc-jadwiga.herokuapp.com/api to access all available endpoints";
+  res.status(200).send({ welcome });
+};

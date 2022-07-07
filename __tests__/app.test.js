@@ -542,4 +542,16 @@ describe("my Express app", () => {
         });
     });
   });
+  describe("", () => {
+    it("200: responds with a welcome message", () => {
+      const welcome =
+        "Welcome!\nUse https://news-nc-jadwiga.herokuapp.com/api to access all available endpoints";
+      return request(app)
+        .get(app.path())
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.welcome).toBe(welcome);
+        });
+    });
+  });
 });
