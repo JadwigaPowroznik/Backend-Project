@@ -8,7 +8,6 @@ const {
   articleData,
   commentData,
 } = require("../db/data/test-data/");
-const { expect } = require("@jest/globals");
 
 beforeEach(() =>
   seed({
