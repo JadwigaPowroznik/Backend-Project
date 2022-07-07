@@ -9,6 +9,8 @@ const {
   checkUserExist,
   checkArticleIdExist,
   checkTopicExist,
+  checkCommentIdExist,
+  removeCommentById,
 } = require("../models/news.models.js");
 
 exports.getTopics = (req, res, next) => {
@@ -81,4 +83,57 @@ exports.postCommentByArticleId = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+exports.deleteCommentById = async (req, res, next) => {
+  try {
+    let { comment_id } = req.params;
+    await checkCommentIdExist(comment_id);
+    await removeCommentById(comment_id);
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getEndpoints = (req, res) => {
+  const endpointsJson = {
+    "GET /api": {
+      description:
+        "returns a json representation of all the available endpoints of the api",
+    },
+    "GET /api/topics": {
+      description: "returns an array of all topics",
+      queries: [],
+    },
+    "GET /api/articles": {
+      description: "returns an array of all articles",
+      queries: ["sort_by", "order", "topic"],
+    },
+    "GET /api/articles/:article_id": {
+      description: "returns an article of given id",
+      queries: [],
+    },
+    "GET /api/articles/:article_id/comments": {
+      description: "returns an array of all comments for a given article id",
+      queries: [],
+    },
+    "GET /api/users": {
+      description: "returns an array of all users",
+      queries: [],
+    },
+    "PATCH /api/articles/:article_id": {
+      description: "updates votes for an article of given id",
+      queries: [],
+    },
+    "POST /api/articles/:article_id/comments": {
+      description: "posts a new comment for an article of given id",
+      queries: [],
+    },
+    "DELETE /api/comments/:comment_id": {
+      description: "deletes a comment of a given id",
+      queries: [],
+    },
+  };
+  res.status(200).send(endpointsJson);
 };

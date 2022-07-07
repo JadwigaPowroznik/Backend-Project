@@ -459,4 +459,87 @@ describe("my Express app", () => {
         });
     });
   });
+  describe("/api/comments/:comment_id", () => {
+    it("204: responds with an empty response body and checks if comment has been deleted", () => {
+      const id = 8;
+      return request(app)
+        .delete(`/api/comments/${id}`)
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+          return db
+            .query(`SELECT * FROM comments WHERE comment_id =${id}`)
+            .then((result) => {
+              expect(result.rows.length).toBe(0);
+            });
+        });
+    });
+    it("404: bad request response due to invalid comment ID", () => {
+      let id = 50;
+      return request(app)
+        .delete(`/api/comments/${id}`)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Comment ID: ${id} does not exist!`);
+        });
+    });
+    it("400: bad request response for invalid path", () => {
+      return request(app)
+        .delete("/api/comments/notAnID")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Incorrect data type passed to endpoint");
+        });
+    });
+  });
+  describe("/api", () => {
+    it("200: responds with a JSON describing all the available endpoints on this API", () => {
+      const endpointsJson = {
+        "GET /api": {
+          description:
+            "returns a json representation of all the available endpoints of the api",
+        },
+        "GET /api/topics": {
+          description: "returns an array of all topics",
+          queries: [],
+        },
+        "GET /api/articles": {
+          description: "returns an array of all articles",
+          queries: ["sort_by", "order", "topic"],
+        },
+        "GET /api/articles/:article_id": {
+          description: "returns an article of given id",
+          queries: [],
+        },
+        "GET /api/articles/:article_id/comments": {
+          description:
+            "returns an array of all comments for a given article id",
+          queries: [],
+        },
+        "GET /api/users": {
+          description: "returns an array of all users",
+          queries: [],
+        },
+        "PATCH /api/articles/:article_id": {
+          description: "updates votes for an article of given id",
+          queries: [],
+        },
+        "POST /api/articles/:article_id/comments": {
+          description: "posts a new comment for an article of given id",
+          queries: [],
+        },
+        "DELETE /api/comments/:comment_id": {
+          description: "deletes a comment of a given id",
+          queries: [],
+        },
+      };
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual(endpointsJson);
+        });
+    });
+  });
 });
