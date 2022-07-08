@@ -55,9 +55,9 @@ exports.getUsers = (req, res, next) => {
 
 exports.getArticles = async (req, res, next) => {
   try {
-    const { sort_by, order, topic } = req.query;
+    const { sort_by, order, topic, limit, p } = req.query;
     await checkTopicExist(topic);
-    const articles = await fetchArticle(sort_by, order, topic);
+    const articles = await fetchArticle(sort_by, order, limit, p, topic);
     res.status(200).send({ articles });
   } catch (err) {
     next(err);

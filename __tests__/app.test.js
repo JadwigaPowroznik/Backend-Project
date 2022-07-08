@@ -246,7 +246,7 @@ describe("my Express app", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles.length > 0).toBe(true);
+          expect(body.articles.length).toBe(10);
           body.articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
@@ -283,7 +283,7 @@ describe("my Express app", () => {
           });
         });
     });
-    it("200: accepts order=desc, sort_by=article_id adn topic queries", () => {
+    it("200: accepts order=desc, sort_by=article_id and topic queries", () => {
       return request(app)
         .get("/api/articles?order=desc&sort_by=article_id&topic=mitch")
         .expect(200)
@@ -292,6 +292,22 @@ describe("my Express app", () => {
             descending: true,
             coerce: true,
           });
+        });
+    });
+    it("200: accepts limit=10 and p=1 queries", () => {
+      return request(app)
+        .get("/api/articles?limit=10&p=1")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(10);
+        });
+    });
+    it("200: accepts limit=10 and p=2 queries", () => {
+      return request(app)
+        .get("/api/articles?limit=10&p=2")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(2);
         });
     });
     it("404: bad request response for invalid topic", () => {

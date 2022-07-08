@@ -53,7 +53,13 @@ exports.fetchUsers = () => {
   });
 };
 
-exports.fetchArticle = (sort_by = "created_at", order = "desc", topic) => {
+exports.fetchArticle = (
+  sort_by = "created_at",
+  order = "desc",
+  limit = 10,
+  p = 1,
+  topic
+) => {
   const sortOptions = [
     "title",
     "article_id",
@@ -65,6 +71,7 @@ exports.fetchArticle = (sort_by = "created_at", order = "desc", topic) => {
   ];
   const orderOptions = ["asc", "desc"];
   let topicStr = "";
+  let limitStr = "";
   if (!sortOptions.includes(sort_by)) {
     return Promise.reject("Invalid sort query");
   }
@@ -74,9 +81,12 @@ exports.fetchArticle = (sort_by = "created_at", order = "desc", topic) => {
   if (topic !== undefined) {
     topicStr = ` WHERE articles.topic = '${topic}'`;
   }
+  if (p !== undefined) {
+    limitStr = ` OFFSET (${p}-1)* ${limit}`;
+  }
   return db
     .query(
-      `SELECT articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, users.username AS author, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id=articles.article_id LEFT JOIN users ON users.username=articles.author${topicStr} GROUP BY articles.article_id, comments.article_id, users.username ORDER BY ${sort_by} ${order}`
+      `SELECT articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, users.username AS author, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id=articles.article_id LEFT JOIN users ON users.username=articles.author${topicStr} GROUP BY articles.article_id, comments.article_id, users.username ORDER BY ${sort_by} ${order} LIMIT ${limit}${limitStr}`
     )
     .then((result) => {
       return result.rows;
