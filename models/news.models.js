@@ -93,10 +93,10 @@ exports.fetchArticle = (
     });
 };
 
-exports.selectArticleCommentsById = (id) => {
+exports.selectArticleCommentsById = (id, limit = 10, p = 1) => {
   return db
     .query(
-      `SELECT comments.comment_id, comments.votes, comments.created_at, comments.body, users.username AS author FROM comments LEFT JOIN users ON users.username=comments.author LEFT JOIN articles ON articles.article_id=comments.article_id WHERE articles.article_id = $1`,
+      `SELECT comments.comment_id, comments.votes, comments.created_at, comments.body, users.username AS author FROM comments LEFT JOIN users ON users.username=comments.author LEFT JOIN articles ON articles.article_id=comments.article_id WHERE articles.article_id = $1 LIMIT ${limit} OFFSET (${p}-1)* ${limit}`,
       [id]
     )
     .then(({ rows }) => {

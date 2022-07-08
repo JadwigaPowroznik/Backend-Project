@@ -1,22 +1,6 @@
 You are now connected to database "nc_news_test" as user "jadwiga".
-                         title                          | article_id | topic |     created_at      | votes |    author     | comment_count | total_count 
---------------------------------------------------------+------------+-------+---------------------+-------+---------------+---------------+-------------
- Eight pug gifs that remind me of mitch                 |          3 | mitch | 2020-11-03 09:12:00 |     0 | icellusedkars |             2 |           2
- A                                                      |          6 | mitch | 2020-10-18 02:00:00 |     0 | icellusedkars |             1 |           1
- Sony Vaio; or, The Laptop                              |          2 | mitch | 2020-10-16 06:03:00 |     0 | icellusedkars |             0 |           1
- Moustache                                              |         12 | mitch | 2020-10-11 12:24:00 |     0 | butter_bridge |             0 |           1
- Living in the shadow of a great man                    |          1 | mitch | 2020-07-09 21:11:00 |   100 | butter_bridge |            11 |          11
- They're not exactly dogs, are they?                    |          9 | mitch | 2020-06-06 10:10:00 |     0 | butter_bridge |             2 |           2
- Seven inspirational thought leaders from Manchester UK |         10 | mitch | 2020-05-14 05:15:00 |     0 | rogersop      |             0 |           1
- Student SUES Mitch!                                    |          4 | mitch | 2020-05-06 02:14:00 |     0 | rogersop      |             0 |           1
- Does Mitch predate civilisation?                       |          8 | mitch | 2020-04-17 02:08:00 |     0 | icellusedkars |             0 |           1
- Am I a cat?                                            |         11 | mitch | 2020-01-15 22:21:00 |     0 | icellusedkars |             0 |           1
- Z                                                      |          7 | mitch | 2020-01-07 14:08:00 |     0 | icellusedkars |             0 |           1
-(11 rows)
-
-    title    | article_id | topic |     created_at      | votes |    author     | comment_count 
--------------+------------+-------+---------------------+-------+---------------+---------------
- Am I a cat? |         11 | mitch | 2020-01-15 22:21:00 |     0 | icellusedkars |             0
- Z           |          7 | mitch | 2020-01-07 14:08:00 |     0 | icellusedkars |             0
-(2 rows)
+ comment_id | votes |     created_at      |                                                                                         body                                                                                         |    author     
+------------+-------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------
+          3 |   100 | 2020-03-01 01:13:00 | Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works. | icellusedkars
+(1 row)
 

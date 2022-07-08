@@ -16,7 +16,9 @@
 -- SELECT articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, users.username AS author, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id=articles.article_id LEFT JOIN users ON users.username=articles.author WHERE articles.topic = 'mitch' GROUP BY articles.article_id, comments.article_id, users.username ORDER BY article_id DESC 
 
 
-SELECT articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, users.username AS author, COUNT(comment_id) AS comment_count, COUNT(articles.article_id) AS total_count FROM articles LEFT JOIN comments ON comments.article_id=articles.article_id LEFT JOIN users ON users.username=articles.author WHERE articles.topic = 'mitch' GROUP BY articles.article_id, comments.article_id, users.username ORDER BY created_at DESC ;
--- LIMIT 10 OFFSET (0)* 10
---  LIMIT ${limit} OFFSET (${p})* ${limit}
-SELECT articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, users.username AS author, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id=articles.article_id LEFT JOIN users ON users.username=articles.author GROUP BY articles.article_id, comments.article_id, users.username ORDER BY created_at DESC LIMIT 10 OFFSET (1)* 10
+-- SELECT articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, users.username AS author, COUNT(comment_id) AS comment_count, COUNT(articles.article_id) AS total_count FROM articles LEFT JOIN comments ON comments.article_id=articles.article_id LEFT JOIN users ON users.username=articles.author WHERE articles.topic = 'mitch' GROUP BY articles.article_id, comments.article_id, users.username ORDER BY created_at DESC ;
+-- -- LIMIT 10 OFFSET (0)* 10
+-- --  LIMIT ${limit} OFFSET (${p})* ${limit}
+-- SELECT articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, users.username AS author, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id=articles.article_id LEFT JOIN users ON users.username=articles.author GROUP BY articles.article_id, comments.article_id, users.username ORDER BY created_at DESC LIMIT 10 OFFSET (0)* 10
+
+SELECT comments.comment_id, comments.votes, comments.created_at, comments.body, users.username AS author FROM comments LEFT JOIN users ON users.username=comments.author LEFT JOIN articles ON articles.article_id=comments.article_id WHERE articles.article_id = 1 LIMIT 10 OFFSET (1)* 10

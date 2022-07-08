@@ -66,8 +66,8 @@ exports.getArticles = async (req, res, next) => {
 
 exports.getArticleCommentsById = (req, res, next) => {
   const { article_id } = req.params;
-
-  selectArticleCommentsById(article_id)
+  const { limit, p } = req.query;
+  selectArticleCommentsById(article_id, limit, p)
     .then((comments) => {
       res.status(200).send({ comments });
     })
@@ -111,32 +111,52 @@ exports.getEndpoints = (req, res) => {
       description: "returns an array of all topics",
       queries: [],
     },
+    "POST /api/topics": {
+      description: "returns a newly added topic",
+      queries: [],
+    },
     "GET /api/articles": {
       description: "returns an array of all articles",
-      queries: ["sort_by", "order", "topic"],
+      queries: ["sort_by", "order", "topic", "limit", "p"],
+    },
+    "POST /api/articles": {
+      description: "returns a newly added article",
+      queries: [],
     },
     "GET /api/articles/:article_id": {
       description: "returns an article of given id",
-      queries: [],
-    },
-    "GET /api/articles/:article_id/comments": {
-      description: "returns an array of all comments for a given article id",
-      queries: [],
-    },
-    "GET /api/users": {
-      description: "returns an array of all users",
       queries: [],
     },
     "PATCH /api/articles/:article_id": {
       description: "updates votes for an article of given id",
       queries: [],
     },
+    "DELETE /api/articles/:article_id": {
+      description: "deletesthe given article by article_id",
+      queries: [],
+    },
     "POST /api/articles/:article_id/comments": {
       description: "posts a new comment for an article of given id",
       queries: [],
     },
+    "GET /api/articles/:article_id/comments": {
+      description: "returns an array of all comments for a given article id",
+      queries: ["limit", "p"],
+    },
+    "GET /api/users": {
+      description: "returns an array of all users",
+      queries: [],
+    },
+    "GET /api/users/:username": {
+      description: "returns an object of given user",
+      queries: [],
+    },
     "DELETE /api/comments/:comment_id": {
       description: "deletes a comment of a given id",
+      queries: [],
+    },
+    "PATCH /api/comments/:comment_id": {
+      description: "updates a comment of a given id",
       queries: [],
     },
   };

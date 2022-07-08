@@ -328,18 +328,35 @@ describe("my Express app", () => {
     });
   });
   describe("/api/articles/:article_id/comments", () => {
-    it("200: responds with an array of comments for the given article_id", () => {
+    it("200: responds with an array of comments for the given article_id, page 1", () => {
       const article_id = 1;
       return request(app)
         .get(`/api/articles/${article_id}/comments`)
         .expect(200)
         .then(({ body }) => {
+          expect(body.comments.length).toBe(10);
           expect(body.comments[0]).toEqual({
             comment_id: 18,
             votes: 16,
             created_at: "2020-07-21T00:20:00.000Z",
             body: "This morning, I showered for nine minutes.",
             author: "butter_bridge",
+          });
+        });
+    });
+    it("200: responds with an array of comments for the given article_id, page 2", () => {
+      const article_id = 1;
+      return request(app)
+        .get(`/api/articles/${article_id}/comments?p=2`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments.length).toBe(1);
+          expect(body.comments[0]).toEqual({
+            comment_id: 3,
+            votes: 100,
+            created_at: "2020-03-01T01:13:00.000Z",
+            body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+            author: "icellusedkars",
           });
         });
     });
@@ -520,33 +537,53 @@ describe("my Express app", () => {
           description: "returns an array of all topics",
           queries: [],
         },
+        "POST /api/topics": {
+          description: "returns a newly added topic",
+          queries: [],
+        },
         "GET /api/articles": {
           description: "returns an array of all articles",
-          queries: ["sort_by", "order", "topic"],
+          queries: ["sort_by", "order", "topic", "limit", "p"],
+        },
+        "POST /api/articles": {
+          description: "returns a newly added article",
+          queries: [],
         },
         "GET /api/articles/:article_id": {
           description: "returns an article of given id",
-          queries: [],
-        },
-        "GET /api/articles/:article_id/comments": {
-          description:
-            "returns an array of all comments for a given article id",
-          queries: [],
-        },
-        "GET /api/users": {
-          description: "returns an array of all users",
           queries: [],
         },
         "PATCH /api/articles/:article_id": {
           description: "updates votes for an article of given id",
           queries: [],
         },
+        "DELETE /api/articles/:article_id": {
+          description: "deletesthe given article by article_id",
+          queries: [],
+        },
         "POST /api/articles/:article_id/comments": {
           description: "posts a new comment for an article of given id",
           queries: [],
         },
+        "GET /api/articles/:article_id/comments": {
+          description:
+            "returns an array of all comments for a given article id",
+          queries: ["limit", "p"],
+        },
+        "GET /api/users": {
+          description: "returns an array of all users",
+          queries: [],
+        },
+        "GET /api/users/:username": {
+          description: "returns an object of given user",
+          queries: [],
+        },
         "DELETE /api/comments/:comment_id": {
           description: "deletes a comment of a given id",
+          queries: [],
+        },
+        "PATCH /api/comments/:comment_id": {
+          description: "updates a comment of a given id",
           queries: [],
         },
       };
