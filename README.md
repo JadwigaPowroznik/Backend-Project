@@ -1,8 +1,6 @@
-Update your readme to explain what files a developer must add in order to successfully connect to the two databases locally.
+Link to the project: https://news-nc-jadwiga.herokuapp.com/
 
 Developer has to create the environment variebles to connect to a database using dotenv package. There should be two files created - .env.test and .env.development. They allow to connect to a database on different routes - test or development. It helps to aviod unnecessary updates to a database while running tests. The database is re-seeded before each test so any updates to a database are 'cancelled'. The development route allows for changes to be present (no reseeding) so client can interact with the app.
-
-Give instructions on how to create the environment variables for anyone who wishes to clone your project and run it locally.
 
 To interact with a database and to create the environment variables follow the steps below:
 

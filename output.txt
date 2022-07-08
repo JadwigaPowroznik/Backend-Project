@@ -1,6 +1,6 @@
 You are now connected to database "nc_news_test" as user "jadwiga".
-DELETE 0
- comment_id | body | article_id | author | votes | created_at 
-------------+------+------------+--------+-------+------------
-(0 rows)
+ comment_id | votes |     created_at      |                                                                                         body                                                                                         |    author     
+------------+-------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------
+          3 |   100 | 2020-03-01 01:13:00 | Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works. | icellusedkars
+(1 row)
 

@@ -11,6 +11,11 @@ const {
   checkTopicExist,
   checkCommentIdExist,
   removeCommentById,
+  fetchUser,
+  updateCommentById,
+  addArticle,
+  addTopic,
+  removeArticleById,
 } = require("../models/news.models.js");
 
 exports.getTopics = (req, res, next) => {
@@ -50,9 +55,9 @@ exports.getUsers = (req, res, next) => {
 
 exports.getArticles = async (req, res, next) => {
   try {
-    const { sort_by, order, topic } = req.query;
+    const { sort_by, order, topic, limit, p } = req.query;
     await checkTopicExist(topic);
-    const articles = await fetchArticle(sort_by, order, topic);
+    const articles = await fetchArticle(sort_by, order, limit, p, topic);
     res.status(200).send({ articles });
   } catch (err) {
     next(err);
@@ -61,8 +66,8 @@ exports.getArticles = async (req, res, next) => {
 
 exports.getArticleCommentsById = (req, res, next) => {
   const { article_id } = req.params;
-
-  selectArticleCommentsById(article_id)
+  const { limit, p } = req.query;
+  selectArticleCommentsById(article_id, limit, p)
     .then((comments) => {
       res.status(200).send({ comments });
     })
@@ -106,34 +111,118 @@ exports.getEndpoints = (req, res) => {
       description: "returns an array of all topics",
       queries: [],
     },
+    "POST /api/topics": {
+      description: "returns a newly added topic",
+      queries: [],
+    },
     "GET /api/articles": {
       description: "returns an array of all articles",
-      queries: ["sort_by", "order", "topic"],
+      queries: ["sort_by", "order", "topic", "limit", "p"],
+    },
+    "POST /api/articles": {
+      description: "returns a newly added article",
+      queries: [],
     },
     "GET /api/articles/:article_id": {
       description: "returns an article of given id",
-      queries: [],
-    },
-    "GET /api/articles/:article_id/comments": {
-      description: "returns an array of all comments for a given article id",
-      queries: [],
-    },
-    "GET /api/users": {
-      description: "returns an array of all users",
       queries: [],
     },
     "PATCH /api/articles/:article_id": {
       description: "updates votes for an article of given id",
       queries: [],
     },
+    "DELETE /api/articles/:article_id": {
+      description: "deletesthe given article by article_id",
+      queries: [],
+    },
     "POST /api/articles/:article_id/comments": {
       description: "posts a new comment for an article of given id",
+      queries: [],
+    },
+    "GET /api/articles/:article_id/comments": {
+      description: "returns an array of all comments for a given article id",
+      queries: ["limit", "p"],
+    },
+    "GET /api/users": {
+      description: "returns an array of all users",
+      queries: [],
+    },
+    "GET /api/users/:username": {
+      description: "returns an object of given user",
       queries: [],
     },
     "DELETE /api/comments/:comment_id": {
       description: "deletes a comment of a given id",
       queries: [],
     },
+    "PATCH /api/comments/:comment_id": {
+      description: "updates a comment of a given id",
+      queries: [],
+    },
   };
   res.status(200).send(endpointsJson);
+};
+
+exports.getStarted = (req, res) => {
+  const welcome =
+    "Welcome!\nUse https://news-nc-jadwiga.herokuapp.com/api to access all available endpoints";
+  res.status(200).send({ welcome });
+};
+
+exports.getUsersByUsername = async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    await checkUserExist(username);
+    const user = await fetchUser(username);
+    res.status(200).send({ user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  const updatedComment = req.body;
+  updateCommentById(comment_id, updatedComment)
+    .then((comment) => {
+      res.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postArticle = async (req, res, next) => {
+  try {
+    const newArticle = req.body;
+    const { author, topic } = req.body;
+    await checkUserExist(author);
+    await checkTopicExist(topic);
+    const article = await addArticle(newArticle);
+    res.status(200).send({ article });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.postTopic = (req, res, next) => {
+  const newTopic = req.body;
+  addTopic(newTopic)
+    .then((topic) => {
+      res.status(200).send({ topic });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticleById = async (req, res, next) => {
+  try {
+    let { article_id } = req.params;
+    await checkArticleIdExist(article_id);
+    await removeArticleById(article_id);
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
 };

@@ -76,7 +76,7 @@ describe("my Express app", () => {
         .expect(400)
         .then(({ body }) => {
           const errMsg = body.errMessage;
-          expect(errMsg).toBe("Bad data type passed to endpoint");
+          expect(errMsg).toBe("Incorrect data type passed to endpoint");
         });
     });
     it("404: bad request response for invalid article ID", () => {
@@ -96,7 +96,7 @@ describe("my Express app", () => {
         .expect(404)
         .then(({ body }) => {
           const errMsg = body.errMessage;
-          expect(errMsg).toBe(`Article ID does not exist!`);
+          expect(errMsg).toBe(`ID does not exist!`);
         });
     });
   });
@@ -181,7 +181,7 @@ describe("my Express app", () => {
         .expect(400)
         .then(({ body }) => {
           const errMsg = body.errMessage;
-          expect(errMsg).toBe("Bad data type passed to endpoint");
+          expect(errMsg).toBe("Incorrect data type passed to endpoint");
         });
     });
     it("404: bad request response for invalid article ID", () => {
@@ -209,7 +209,7 @@ describe("my Express app", () => {
         .expect(404)
         .then(({ body }) => {
           const errMsg = body.errMessage;
-          expect(errMsg).toBe(`Article ID does not exist!`);
+          expect(errMsg).toBe(`ID does not exist!`);
         });
     });
   });
@@ -246,7 +246,7 @@ describe("my Express app", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles.length > 0).toBe(true);
+          expect(body.articles.length).toBe(10);
           body.articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
@@ -283,7 +283,7 @@ describe("my Express app", () => {
           });
         });
     });
-    it("200: accepts order=desc, sort_by=article_id adn topic queries", () => {
+    it("200: accepts order=desc, sort_by=article_id and topic queries", () => {
       return request(app)
         .get("/api/articles?order=desc&sort_by=article_id&topic=mitch")
         .expect(200)
@@ -292,6 +292,22 @@ describe("my Express app", () => {
             descending: true,
             coerce: true,
           });
+        });
+    });
+    it("200: accepts limit=10 and p=1 queries", () => {
+      return request(app)
+        .get("/api/articles?limit=10&p=1")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(10);
+        });
+    });
+    it("200: accepts limit=10 and p=2 queries", () => {
+      return request(app)
+        .get("/api/articles?limit=10&p=2")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(2);
         });
     });
     it("404: bad request response for invalid topic", () => {
@@ -312,12 +328,13 @@ describe("my Express app", () => {
     });
   });
   describe("/api/articles/:article_id/comments", () => {
-    it("200: responds with an array of comments for the given article_id", () => {
+    it("200: responds with an array of comments for the given article_id, page 1", () => {
       const article_id = 1;
       return request(app)
         .get(`/api/articles/${article_id}/comments`)
         .expect(200)
         .then(({ body }) => {
+          expect(body.comments.length).toBe(10);
           expect(body.comments[0]).toEqual({
             comment_id: 18,
             votes: 16,
@@ -327,13 +344,29 @@ describe("my Express app", () => {
           });
         });
     });
+    it("200: responds with an array of comments for the given article_id, page 2", () => {
+      const article_id = 1;
+      return request(app)
+        .get(`/api/articles/${article_id}/comments?p=2`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments.length).toBe(1);
+          expect(body.comments[0]).toEqual({
+            comment_id: 3,
+            votes: 100,
+            created_at: "2020-03-01T01:13:00.000Z",
+            body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+            author: "icellusedkars",
+          });
+        });
+    });
     it("400: bad request response for invalid path", () => {
       return request(app)
         .get("/api/articles/notAnID/comments")
         .expect(400)
         .then(({ body }) => {
           const errMsg = body.errMessage;
-          expect(errMsg).toBe("Bad data type passed to endpoint");
+          expect(errMsg).toBe("Incorrect data type passed to endpoint");
         });
     });
     it("404: bad request response for invalid article ID", () => {
@@ -353,7 +386,7 @@ describe("my Express app", () => {
         .expect(404)
         .then(({ body }) => {
           const errMsg = body.errMessage;
-          expect(errMsg).toBe(`Article ID does not exist!`);
+          expect(errMsg).toBe(`ID does not exist!`);
         });
     });
   });
@@ -410,7 +443,7 @@ describe("my Express app", () => {
         .expect(400)
         .then(({ body }) => {
           const errMsg = body.errMessage;
-          expect(errMsg).toBe("Bad data type passed to endpoint");
+          expect(errMsg).toBe("Incorrect data type passed to endpoint");
         });
     });
     it("404: bad request response due to invalid username", () => {
@@ -455,7 +488,7 @@ describe("my Express app", () => {
         .expect(404)
         .then(({ body }) => {
           const errMsg = body.errMessage;
-          expect(errMsg).toBe(`Article ID does not exist!`);
+          expect(errMsg).toBe(`ID does not exist!`);
         });
     });
   });
@@ -504,33 +537,53 @@ describe("my Express app", () => {
           description: "returns an array of all topics",
           queries: [],
         },
+        "POST /api/topics": {
+          description: "returns a newly added topic",
+          queries: [],
+        },
         "GET /api/articles": {
           description: "returns an array of all articles",
-          queries: ["sort_by", "order", "topic"],
+          queries: ["sort_by", "order", "topic", "limit", "p"],
+        },
+        "POST /api/articles": {
+          description: "returns a newly added article",
+          queries: [],
         },
         "GET /api/articles/:article_id": {
           description: "returns an article of given id",
-          queries: [],
-        },
-        "GET /api/articles/:article_id/comments": {
-          description:
-            "returns an array of all comments for a given article id",
-          queries: [],
-        },
-        "GET /api/users": {
-          description: "returns an array of all users",
           queries: [],
         },
         "PATCH /api/articles/:article_id": {
           description: "updates votes for an article of given id",
           queries: [],
         },
+        "DELETE /api/articles/:article_id": {
+          description: "deletesthe given article by article_id",
+          queries: [],
+        },
         "POST /api/articles/:article_id/comments": {
           description: "posts a new comment for an article of given id",
           queries: [],
         },
+        "GET /api/articles/:article_id/comments": {
+          description:
+            "returns an array of all comments for a given article id",
+          queries: ["limit", "p"],
+        },
+        "GET /api/users": {
+          description: "returns an array of all users",
+          queries: [],
+        },
+        "GET /api/users/:username": {
+          description: "returns an object of given user",
+          queries: [],
+        },
         "DELETE /api/comments/:comment_id": {
           description: "deletes a comment of a given id",
+          queries: [],
+        },
+        "PATCH /api/comments/:comment_id": {
+          description: "updates a comment of a given id",
           queries: [],
         },
       };
@@ -539,6 +592,353 @@ describe("my Express app", () => {
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual(endpointsJson);
+        });
+    });
+  });
+  describe("", () => {
+    it("200: responds with a welcome message", () => {
+      const welcome =
+        "Welcome!\nUse https://news-nc-jadwiga.herokuapp.com/api to access all available endpoints";
+      return request(app)
+        .get(app.path())
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.welcome).toBe(welcome);
+        });
+    });
+  });
+  describe("/api/users/:username", () => {
+    it("200: responds with username details", () => {
+      const username = "rogersop";
+      return request(app)
+        .get(`/api/users/${username}`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.user).toEqual({
+            username: "rogersop",
+            avatar_url:
+              "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+            name: "paul",
+          });
+        });
+    });
+    it("400: bad request response for invalid path", () => {
+      const username = "rogersop";
+      return request(app)
+        .get(`/api/person/${username}`)
+        .expect(404)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Invalid path");
+        });
+    });
+    it("404: bad request response due to invalid username", () => {
+      const username = "jadwiga";
+      return request(app)
+        .get(`/api/users/${username}`)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Username not Found!`);
+        });
+    });
+  });
+  describe("/api/comments/:comment_id", () => {
+    it("200: responds with the updated comment object where votes are incremented", () => {
+      const comment_id = 1;
+      const commentUpdate = {
+        inc_votes: 4,
+      };
+      return request(app)
+        .patch(`/api/comments/${comment_id}`)
+        .send(commentUpdate)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: comment_id,
+              body: expect.any(String),
+              article_id: 9,
+              author: "butter_bridge",
+              votes: 20,
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    it("200: responds with the updated article object where votes are decremented", () => {
+      const comment_id = 1;
+      const commentUpdate = {
+        inc_votes: -6,
+      };
+      return request(app)
+        .patch(`/api/comments/${comment_id}`)
+        .send(commentUpdate)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: comment_id,
+              body: expect.any(String),
+              article_id: 9,
+              author: "butter_bridge",
+              votes: 10,
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    it("400: bad request response due to missing required fields", () => {
+      let id = 2;
+      const commentUpdate = {};
+      return request(app)
+        .patch(`/api/comments/${id}`)
+        .send(commentUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.msg;
+          expect(errMsg).toBe(`Missing required fields!`);
+        });
+    });
+    it("400: bad request response due to incorrect data type", () => {
+      let id = 2;
+      const commentUpdate = { inc_votes: "increment" };
+      return request(app)
+        .patch(`/api/comments/${id}`)
+        .send(commentUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.msg;
+          expect(errMsg).toBe(`Incorrect data type!`);
+        });
+    });
+    it("400: bad request response for invalid path", () => {
+      const commentUpdate = {
+        inc_votes: -10,
+      };
+      return request(app)
+        .patch("/api/comments/notAnID")
+        .send(commentUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe("Incorrect data type passed to endpoint");
+        });
+    });
+    it("404: bad request response for invalid article ID", () => {
+      let id = 33333;
+      const commentUpdate = {
+        inc_votes: -10,
+      };
+      return request(app)
+        .patch(`/api/comments/${id}`)
+        .send(commentUpdate)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Comment ID ${id} does not exist!`);
+        });
+    });
+    it("404: bad request response for ID value out of range", () => {
+      let id = 5555555555555555555;
+      const commentUpdate = {
+        inc_votes: -10,
+      };
+      return request(app)
+        .patch(`/api/comments/${id}`)
+        .send(commentUpdate)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`ID does not exist!`);
+        });
+    });
+  });
+  describe("/api/articles", () => {
+    it("200: responds with the posted article", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        title: "nothing",
+        body: "something to tell",
+        topic: "mitch",
+      };
+      const resArticle = {
+        article_id: expect.any(Number),
+        votes: 0,
+        created_at: expect.any(String),
+        comment_count: null,
+      };
+      return request(app)
+        .post(`/api/articles`)
+        .send(newArticle)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toEqual(resArticle);
+        });
+    });
+    it("400: bad request response due to missing required field", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        title: "nothing",
+        topic: "mitch",
+      };
+      return request(app)
+        .post(`/api/articles`)
+        .send(newArticle)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.msg;
+          expect(errMsg).toBe(`Missing required fields!`);
+        });
+    });
+    it("400: bad request response due to missing required field", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        title: "nothing",
+        body: "something to tell",
+      };
+      return request(app)
+        .post(`/api/articles`)
+        .send(newArticle)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.msg;
+          expect(errMsg).toBe(`Missing required fields!`);
+        });
+    });
+    it("400: bad request response for invalid path", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        title: "nothing",
+        body: "something to tell",
+        topic: "mitch",
+      };
+      return request(app)
+        .post("/api/NOTarticles")
+        .send(newArticle)
+        .expect(404)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Invalid path");
+        });
+    });
+    it("404: bad request response due to invalid username", () => {
+      const newArticle = {
+        author: "jadwiga",
+        title: "nothing",
+        body: "something to tell",
+        topic: "mitch",
+      };
+      return request(app)
+        .post(`/api/articles`)
+        .send(newArticle)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Username not Found!`);
+        });
+    });
+    it("404: bad request response due to invalid topic", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        title: "nothing",
+        body: "something to tell",
+        topic: "nothingggggggggggggg",
+      };
+      return request(app)
+        .post(`/api/articles`)
+        .send(newArticle)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Topic: nothingggggggggggggg does not exist!`);
+        });
+    });
+  });
+  describe("/api/topics", () => {
+    it("200: responds with the posted article", () => {
+      const newTopic = {
+        slug: "something new",
+        description: "something new has been added!",
+      };
+      return request(app)
+        .post(`/api/topics`)
+        .send(newTopic)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.topic).toEqual(newTopic);
+        });
+    });
+    it("400: bad request response due to missing required field", () => {
+      const newTopic = {
+        description: "something new has been added!",
+      };
+      return request(app)
+        .post(`/api/topics`)
+        .send(newTopic)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.msg;
+          expect(errMsg).toBe(`Missing required fields!`);
+        });
+    });
+    it("400: bad request response due to missing required field", () => {
+      const newArticle = {};
+      return request(app)
+        .post(`/api/topics`)
+        .send(newArticle)
+        .expect(400)
+        .then(({ body }) => {
+          const errMsg = body.msg;
+          expect(errMsg).toBe(`Missing required fields!`);
+        });
+    });
+    it("400: bad request response for invalid path", () => {
+      const newTopic = {
+        slug: "something new",
+        description: "something new has been added!",
+      };
+      return request(app)
+        .post("/api/NOT")
+        .send(newTopic)
+        .expect(404)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Invalid path");
+        });
+    });
+  });
+  describe("/api/articles/:article_id", () => {
+    it("204: responds with an empty response body and checks if article has been deleted", () => {
+      const id = 8;
+      return request(app)
+        .delete(`/api/articles/${id}`)
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+          return db
+            .query(`SELECT * FROM articles WHERE article_id =${id}`)
+            .then((result) => {
+              expect(result.rows.length).toBe(0);
+            });
+        });
+    });
+    it("404: bad request response due to invalid comment ID", () => {
+      let id = 50;
+      return request(app)
+        .delete(`/api/articles/${id}`)
+        .expect(404)
+        .then(({ body }) => {
+          const errMsg = body.errMessage;
+          expect(errMsg).toBe(`Article ID ${id} does not exist!`);
+        });
+    });
+    it("400: bad request response for invalid path", () => {
+      return request(app)
+        .delete("/api/articles/notAnID")
+        .expect(400)
+        .then(({ body: { errMessage } }) => {
+          expect(errMessage).toBe("Incorrect data type passed to endpoint");
         });
     });
   });
