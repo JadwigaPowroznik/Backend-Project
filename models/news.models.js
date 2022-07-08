@@ -182,3 +182,76 @@ exports.removeCommentById = (id) => {
       return result;
     });
 };
+
+exports.fetchUser = (username) => {
+  return db
+    .query(`SELECT * FROM users WHERE username='${username}'`)
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
+exports.updateCommentById = (comment_id, updatedComment) => {
+  if (!("inc_votes" in updatedComment)) {
+    return Promise.reject("Missing required fields!");
+  }
+  if (!(typeof updatedComment.inc_votes === "number")) {
+    return Promise.reject("Incorrect data type!");
+  }
+  const { inc_votes } = updatedComment;
+  return db
+    .query(
+      "UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;",
+      [inc_votes, comment_id]
+    )
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          errMessage: `Comment ID ${comment_id} does not exist!`,
+        });
+      }
+      return result.rows[0];
+    });
+};
+
+exports.addArticle = (newArticle) => {
+  if (!("author" in newArticle && "topic" in newArticle)) {
+    return Promise.reject("Missing required fields!");
+  }
+  if (!("title" in newArticle && "body" in newArticle)) {
+    return Promise.reject("Missing required fields!");
+  }
+  const { author, title, body, topic } = newArticle;
+  return db
+    .query(
+      `INSERT INTO articles (author, title, body, topic ) VALUES ($1, $2, $3, $4) RETURNING articles.article_id, articles.votes, articles.created_at, (SELECT COUNT(comment_id) AS comment_count FROM comments LEFT JOIN articles ON articles.article_id = comments.article_id WHERE articles.article_id=currval(pg_get_serial_sequence('articles','article_id')) GROUP BY articles.article_id, comments.article_id)`,
+      [author, title, body, topic]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
+exports.addTopic = (newTopic) => {
+  if (!("slug" in newTopic && "description" in newTopic)) {
+    return Promise.reject("Missing required fields!");
+  }
+  const { slug, description } = newTopic;
+  return db
+    .query(
+      `INSERT INTO topics (slug, description ) VALUES ($1, $2) RETURNING *`,
+      [slug, description]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
+exports.removeArticleById = (article_id) => {
+  return db
+    .query("DELETE FROM articles WHERE article_id=$1", [article_id])
+    .then((result) => {
+      return result;
+    });
+};

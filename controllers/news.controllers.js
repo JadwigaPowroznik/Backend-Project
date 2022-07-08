@@ -11,6 +11,11 @@ const {
   checkTopicExist,
   checkCommentIdExist,
   removeCommentById,
+  fetchUser,
+  updateCommentById,
+  addArticle,
+  addTopic,
+  removeArticleById,
 } = require("../models/news.models.js");
 
 exports.getTopics = (req, res, next) => {
@@ -142,4 +147,62 @@ exports.getStarted = (req, res) => {
   const welcome =
     "Welcome!\nUse https://news-nc-jadwiga.herokuapp.com/api to access all available endpoints";
   res.status(200).send({ welcome });
+};
+
+exports.getUsersByUsername = async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    await checkUserExist(username);
+    const user = await fetchUser(username);
+    res.status(200).send({ user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  const updatedComment = req.body;
+  updateCommentById(comment_id, updatedComment)
+    .then((comment) => {
+      res.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postArticle = async (req, res, next) => {
+  try {
+    const newArticle = req.body;
+    const { author, topic } = req.body;
+    await checkUserExist(author);
+    await checkTopicExist(topic);
+    const article = await addArticle(newArticle);
+    res.status(200).send({ article });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.postTopic = (req, res, next) => {
+  const newTopic = req.body;
+  addTopic(newTopic)
+    .then((topic) => {
+      res.status(200).send({ topic });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticleById = async (req, res, next) => {
+  try {
+    let { article_id } = req.params;
+    await checkArticleIdExist(article_id);
+    await removeArticleById(article_id);
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
 };
