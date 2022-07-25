@@ -1,9 +1,10 @@
+const cors = require("cors");
 const express = require("express");
 const apiRouter = require("./routes/apiRouter");
 const { getStarted } = require("./controllers/news.controllers.js");
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
 app.get(app.path(), getStarted);
